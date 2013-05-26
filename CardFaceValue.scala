@@ -1,13 +1,13 @@
-class CardFaceValue(val highValue:Int, val symbol:String, val lowValue:Int=0){
+class CardFaceValue(val highValue:Int,val lowValue:Int,val symbol:String){
 }
 
 object CardFaceValue extends App {
-	def apply(value:Int, symbol:String) = {
-		val cardFaceValue = new CardFaceValue(value,symbol)
+	def apply(symbol:String,value:Int) = {
+		val cardFaceValue = new CardFaceValue(value,0,symbol)
 		cardFaceValue
 	}
-	def apply(value:Int, symbol:String, lowValue:Int) = {
-		val cardFaceValue = new CardFaceValue(value, symbol, lowValue)
+	def apply(symbol:String, value:Int, lowValue:Int) = {
+		val cardFaceValue = new CardFaceValue(value, lowValue, symbol)
 		cardFaceValue
 	}
 }
