@@ -7,7 +7,7 @@ class Player {
 	amount = initialAmount	
    }
 
-   def hitMe(card:Card) = {
+   def takeCard(card:Card) = {
 	hand.add(card)
    }
 
@@ -26,5 +26,13 @@ class Player {
 
    def takeWinnings(winnings:Int) = {
 	amount += winnings
+   }
+
+   def clearHand = {
+	hand = new Hand()
+   }
+
+   override def toString:String = {
+	"You have the following cards: "+hand+", totaling "+hand.score
    }
 }
