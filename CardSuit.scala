@@ -1,6 +1,6 @@
 object CardSuit extends Enumeration {
-	val SPADES = "\u2660"
-	val HEARTS = "\u2665"
-	val DIAMONDS = "\u2666"
-	val CLUBS = "\u2663"
+	val SPADES = Value("\u2660")
+	val HEARTS = Value("\u2665")
+	val DIAMONDS = Value("\u2666")
+	val CLUBS = Value("\u2663")
 }

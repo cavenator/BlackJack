@@ -15,3 +15,11 @@ class Card(val display: CardFaceValue, val suit: String) {
 		return display.symbol +suit
 	}
 }
+
+object Card extends App {
+
+	def apply(display:CardFaceValue,suit:String) = {
+		val card = new Card(display, suit)
+		card
+	}
+}
