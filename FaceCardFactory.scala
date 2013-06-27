@@ -1,4 +1,4 @@
-object CardTypeEnum extends Enumeration {
+object FaceCardFactory extends Enumeration {
 	val TWO = CardFaceValue("2",2)
 	val THREE = CardFaceValue("3",3)
 	val FOUR = CardFaceValue("4",4)
@@ -12,4 +12,7 @@ object CardTypeEnum extends Enumeration {
 	val QUEEN = CardFaceValue("Q",10)
 	val KING = CardFaceValue("K",10)
 	val ACE = CardFaceValue("A",11,1)
+	def getCards = {
+		Seq(ACE,TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING)
+	}
 }
