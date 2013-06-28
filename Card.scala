@@ -8,7 +8,7 @@ class Card(val display: CardFaceValue, val suit: String) {
 	}
 
 	def isAce:Boolean = {
-		this.display.equals(CardTypeEnum.ACE)
+		this.display.equals(FaceCardFactory.ACE)
 	}
 
 	override def toString:String = {
