@@ -14,6 +14,10 @@ class Dealer {
 		hand.cards(0)
 	}
 
+	def clearHand = {
+		hand.clear
+	}
+
 	override def toString:String =  {
 		if (timeToPlay) "Dealer is showing a "+showFirstCard
 		else "Dealer is showing "+hand+", totaling "+hand.score

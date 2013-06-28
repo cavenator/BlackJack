@@ -29,6 +29,10 @@ class Hand {
 		else calculateHand(false)
 	}
 
+	def clear = {
+		cards.clear
+	}
+
 	override def toString:String = {
 		cards.mkString
 	}

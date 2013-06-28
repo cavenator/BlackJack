@@ -29,7 +29,7 @@ class Player {
    }
 
    def clearHand = {
-	hand = new Hand()
+	hand.clear
    }
 
    override def toString:String = {
