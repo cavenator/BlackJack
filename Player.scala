@@ -15,7 +15,7 @@ class Player {
 	hand.score
    }
 
-   def hasSuffcientFunds(wager:Int):Boolean = {
+   def hasSufficientFunds(wager:Int):Boolean = {
 	wager > amount
    }
 
