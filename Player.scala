@@ -7,6 +7,10 @@ class Player {
 	amount = initialAmount	
    }
 
+   def hasBlackJack:Boolean = {
+	score == 21 && hand.count == 2
+   }
+
    def takeCard(card:Card) = {
 	hand.add(card)
    }
@@ -15,8 +19,12 @@ class Player {
 	hand.score
    }
 
+   def hasBusted:Boolean = {
+	score > 21
+   }
+
    def hasSufficientFunds(wager:Int):Boolean = {
-	wager > amount
+	wager <= amount
    }
 
    def bet(wager:Int):Int = {

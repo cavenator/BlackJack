@@ -33,7 +33,11 @@ class Hand {
 		cards.clear
 	}
 
+	def count:Int = {
+		cards.size
+	}
+
 	override def toString:String = {
-		cards.mkString
+		cards.mkString(" ")
 	}
 }

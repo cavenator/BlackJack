@@ -6,12 +6,20 @@ class Dealer {
 		hand.add(card)
 	}
 
+	def hasBlackJack = {
+	    score == 21 && hand.count == 2
+	}
+
 	def score = {
 		hand.score
 	}
 
 	def showFirstCard:Card = {
 		hand.cards(0)
+	}
+
+	def hasBusted:Boolean = {
+		score > 21
 	}
 
 	def clearHand = {
