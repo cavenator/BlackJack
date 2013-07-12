@@ -1,12 +1,13 @@
-//Be sure to include if dealer has blackjack in this code
-//Be sure to include logic for when both dealer and player push
+//Be sure to include if dealer has blackjack at beginning of turn
+//Include correct logic for when Double Down option is presentable
+
 
 class BlackJack {
    val player = new Player(100)
    val dealer = new Dealer()
    val deck = Deck.createDeckOfCards
    val threshold = deck.size - 7
-   var counter = 0
+   var counter = 50
    val MINIMUM_BET = 5
    var bet = 0
 
@@ -40,8 +41,10 @@ class BlackJack {
    }
 
    private def shuffleIfNecessary = {
-       if (counter >= threshold)
+       if (counter >= threshold){
            Deck.shuffle(deck)
+	   counter = 0
+	}
    }
 
    def playGame = {
@@ -52,45 +55,25 @@ class BlackJack {
         var playersTurn = true
 	if (player.hasBlackJack){
 	   playersTurn = false
-	}
-        println(dealer)
-        while (playersTurn){
-           println(player)
-           println("What do you want to do? ('h' to Hit, 's' to Stay, 'd' to Double Down or 'q' to quit)")
-           val verdict = readChar()
-           verdict match {
-                case 'h' => {
-                                player.takeCard(deck(counter))
-                                incrementCounter
-	   			if (player.hasBusted) playersTurn = false
-                            }
-                case 's' => {
-                                dealer.timeToPlay = true
-                                 playersTurn = false
-                            }
-                case 'd' => {
-                                bet += player.bet(bet)
-                                player.takeCard(deck(counter))
-                                incrementCounter
-                                dealer.timeToPlay = true
-                                playersTurn = false
-                            }
-		case 'q' => {
-				System.exit(1)
-			    }
-		case _ => println("You have pressed an invalid option! Please try again.")
-           }
-        }
+	   println(player)
+	   println("You have BLACKJACK! Woot!!")
+	   if (dealer.hasBlackJack){
+		println("But Dealer has BlackJack too! It's a wash")
+		player.takeWinnings(bet)
+	   } else {
+                player.takeWinnings(2 * bet)
+	   }
+	} else {
+        	println(dealer)
+        	while (playersTurn){
+		   playersTurn = gameOptions
+        	}
 
-	if (player.hasBlackJack){
-	    println(player)
-	    println("Player has BLACKJACK! Woot!!")
-            player.takeWinnings(bet + MINIMUM_BET)
-	}
-	else if (!player.hasBusted){
-	    playAgainstDealer
-	} else { 
-	    println("Oh no!  You busted! You lose!")
+		if (!player.hasBusted){
+		    playAgainstDealer
+		} else { 
+		    println("Oh no!  You busted! You lose!")
+		}
 	}
 	printf("Player now has $%d left\n", player.amount)
 	cleanup
@@ -102,9 +85,37 @@ class BlackJack {
         player.clearHand
    }
 
+   private def gameOptions:Boolean = {
+	   var turn = true
+           println(player)
+           println("What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)")
+           val verdict = readChar()
+           verdict match {
+                case 'h' => {
+                                player.takeCard(deck(counter))
+                                incrementCounter
+	   			if (player.hasBusted) turn = false
+                            }
+                case 's' => {
+                                dealer.timeToPlay = true
+                                turn = false
+                            }
+                case 'd' => {
+                                bet += player.bet(bet)
+                                player.takeCard(deck(counter))
+                                incrementCounter
+                                dealer.timeToPlay = true
+                                turn = false
+                            }
+		case _ => println("You have pressed an invalid option! Please try again.")
+           }
+	println(player)
+	turn
+   }
+
    private def playAgainstDealer = {
         println(dealer)
-        while (dealer.score <= 17){
+        while (dealer.score < 17){
                 dealer.takeCard(deck(counter))
                 incrementCounter
         	println(dealer)
@@ -112,9 +123,12 @@ class BlackJack {
 
         if (!dealer.hasBusted && dealer.score > player.score){
                 println("You lose!")
-        } else {
+        } else if (dealer.score == player.score) {
+		println("It's a push. You get your bet back")
+		player.takeWinnings(bet)
+	} else {
                 println("You win!!")
-                player.takeWinnings(bet)
+                player.takeWinnings(2 * bet)
         }
    }
 
