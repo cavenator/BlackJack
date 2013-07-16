@@ -7,7 +7,7 @@ object Main{
 	while (isPlaying){
  		if (!blackJackGame.doesPlayerHaveSufficientFundsToPlay){
 			println("Sorry! You do not have enough to play the game. Good bye!")
-			isPlaying = false
+			System.exit(1);
 		}
 		println("Would you like to play a new game? (y or n)")
 		var verdict = readChar()
