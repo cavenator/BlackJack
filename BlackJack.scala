@@ -86,8 +86,16 @@ class BlackJack {
    }
 
    private def gameOptions:Boolean = {
-	   var turn = true
            println(player)
+	   if (player.canDoubleDown(bet)){
+		return playThreeOptions
+	   } else {
+		return hitOrStay
+	   }
+   }
+
+   private def playThreeOptions:Boolean = {
+	   var turn = true
            println("What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)")
            val verdict = readChar()
            verdict match {
@@ -104,6 +112,26 @@ class BlackJack {
                                 bet += player.bet(bet)
                                 player.takeCard(deck(counter))
                                 incrementCounter
+                                dealer.timeToPlay = true
+                                turn = false
+                            }
+		case _ => println("You have pressed an invalid option! Please try again.")
+           }
+	println(player)
+	turn
+   }
+
+   private def hitOrStay:Boolean = {
+	   var turn = true
+           println("What do you want to do? ('h' to Hit or 's' to Stay)")
+           val verdict = readChar()
+           verdict match {
+                case 'h' => {
+                                player.takeCard(deck(counter))
+                                incrementCounter
+	   			if (player.hasBusted) turn = false
+                            }
+                case 's' => {
                                 dealer.timeToPlay = true
                                 turn = false
                             }

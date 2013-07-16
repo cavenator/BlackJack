@@ -23,6 +23,10 @@ class Player {
 	score > 21
    }
 
+   def canDoubleDown(bet:Int):Boolean = {
+	this.hasSufficientFunds(bet) && hand.count == 2
+   }
+
    def hasSufficientFunds(wager:Int):Boolean = {
 	wager <= amount
    }
