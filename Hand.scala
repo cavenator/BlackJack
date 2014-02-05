@@ -6,27 +6,18 @@ class Hand {
 		cards += card
 	}
 
-	private def calculateHand(useHighValueForAce:Boolean):Int = {
-
-		def determineCardValue(card:Card, highValueUsed:Boolean):Int = {
-			if (card.isAce && !highValueUsed) card.lowValue
-			else card.highValue
+        private def computePossibleScores:List[Int] = {
+		def mergeScores(acc: Set[Int], card:Card) = {
+			for { i <- acc; j <- card.values } yield i + j
 		}
-
-		def calculationHelper(card:Card, remainingHand:List[Card], useHighValue:Boolean):Int = {
-			if (remainingHand.isEmpty) return determineCardValue(card, useHighValue)
-			else if (card.isAce) determineCardValue(card, useHighValue) + calculationHelper(remainingHand.head, remainingHand.tail, false)
-			else determineCardValue(card, useHighValue) + calculationHelper(remainingHand.head, remainingHand.tail, useHighValue)
-		}
-
-		val listOfCards = cards.toList
-		calculationHelper(listOfCards.head, listOfCards.tail,useHighValueForAce)
+		cards.foldLeft(Set(0))(mergeScores).toList
 	}
-	
+
 	def score:Int = {
-		val computedScore = calculateHand(true)
-		if (computedScore <= 21) computedScore
-		else calculateHand(false)
+		val possibleScores = computePossibleScores
+		val (goodScores, badScores) = possibleScores.partition( x => x <= 21)
+		if (goodScores.isEmpty) badScores.min
+		else goodScores.max
 	}
 
 	def clear = {

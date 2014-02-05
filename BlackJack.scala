@@ -28,16 +28,24 @@ class BlackJack {
         counter += 1
    }
 
+   private def readBetFromKeyboard = {
+      try {
+      	   readInt()
+      } catch {
+	   case t:Throwable => println("Unable to determine amount! Applying minimum bet ($5)"); MINIMUM_BET
+      }
+   }
+
    private def declareBets = {
         printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
-        val money = readInt()
-        if (player.hasSufficientFunds(money))
+	val money = readBetFromKeyboard
+	if (player.hasSufficientFunds(money))
            bet = player.bet(money)
         else {
            printf("Insufficient funds! You only have %d\n",player.amount)
            println("giving you minimum bet ....")
            bet = player.bet(MINIMUM_BET)
-         }
+	}
    }
 
    private def shuffleIfNecessary = {
@@ -55,7 +63,6 @@ class BlackJack {
         var playersTurn = true
 	if (player.hasBlackJack){
 	   playersTurn = false
-	   println(player)
 	   println("You have BLACKJACK! Woot!!")
 	   if (dealer.hasBlackJack){
 		println("But Dealer has BlackJack too! It's a wash")
