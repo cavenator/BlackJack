@@ -8,7 +8,7 @@ class Player extends AbstractPlayer {
    }
 
    def canDoubleDown(bet:Int):Boolean = {
-	this.hasSufficientFunds(bet)
+	this.hasSufficientFunds(bet) && hand.count == 2
    }
 
    def hasSufficientFunds(wager:Int):Boolean = {

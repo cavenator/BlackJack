@@ -42,8 +42,7 @@ class BlackJack {
 	if (player.hasSufficientFunds(money))
            bet = player.bet(money)
         else {
-           printf("Insufficient funds! You only have %d\n",player.amount)
-           println("giving you minimum bet ....")
+           printf("Insufficient funds! You only have %d\nGiving you the minimum bet: %d\n",player.amount, MINIMUM_BET)
            bet = player.bet(MINIMUM_BET)
 	}
    }
@@ -71,7 +70,7 @@ class BlackJack {
                 player.takeWinnings(2 * bet)
 	   }
 	} else {
-        	println(dealer)
+        	println(dealer+"\n"+player)
         	while (playersTurn){
 		   playersTurn = gameOptions
         	}
@@ -93,7 +92,6 @@ class BlackJack {
    }
 
    private def gameOptions:Boolean = {
-           println(player)
 	   if (player.canDoubleDown(bet)){
 		return playThreeOptions
 	   } else {
