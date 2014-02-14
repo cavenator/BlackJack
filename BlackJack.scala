@@ -1,6 +1,5 @@
-//Be sure to include if dealer has blackjack at beginning of turn
-//Include correct logic for when Double Down option is presentable
-
+//TODO:  Come up with a more clever way to determine when the deck needs to be reshuffled.
+//	 Also, take the isPlayersTurn out and put it into the Player class. it belongs there.
 
 class BlackJack {
    val player = new Player(100)
@@ -9,11 +8,9 @@ class BlackJack {
    val threshold = deck.size - 7
    var counter = 50
    val MINIMUM_BET = 5
+   val DEALER_SCORE_MINIMUM = 17
    var bet = 0
-
-   def doesPlayerHaveSufficientFundsToPlay:Boolean = {
-	player.amount >= MINIMUM_BET
-   }
+   var isPlayersTurn = true
 
    private def assignCards = {
         for (i <- 0 until 2){
@@ -22,23 +19,24 @@ class BlackJack {
            dealer.takeCard(deck(counter))
            incrementCounter
         }
+        dealer.timeToPlay = false
    }
 
    private def incrementCounter = {
         counter += 1
    }
 
-   private def readBetFromKeyboard = {
+   private def readBetFromUserInput = {
       try {
       	   readInt()
       } catch {
-	   case t:Throwable => println("Unable to determine amount! Applying minimum bet ($5)"); MINIMUM_BET
+	   case t:Throwable => printf("Unable to determine amount! Applying minimum bet ($%d)\n", MINIMUM_BET); MINIMUM_BET
       }
    }
 
-   private def declareBets = {
+   private def placeBets = {
         printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
-	val money = readBetFromKeyboard
+	val money = readBetFromUserInput
 	if (player.hasSufficientFunds(money))
            bet = player.bet(money)
         else {
@@ -54,14 +52,20 @@ class BlackJack {
 	}
    }
 
+   def playGamesIfFundsAreSufficient = applyFunctionIfPlayerHasSufficientFunds(playGame)
+   
+
    def playGame = {
 	shuffleIfNecessary
-        declareBets
+
+        placeBets
+
         assignCards
-        dealer.timeToPlay = false
-        var playersTurn = true
+
+        isPlayersTurn = true
+
 	if (player.hasBlackJack){
-	   playersTurn = false
+	   isPlayersTurn = false
 	   println("You have BLACKJACK! Woot!!")
 	   if (dealer.hasBlackJack){
 		println("But Dealer has BlackJack too! It's a wash")
@@ -71,18 +75,26 @@ class BlackJack {
 	   }
 	} else {
         	println(dealer+"\n"+player)
-        	while (playersTurn){
-		   playersTurn = gameOptions
+        	while (!player.hasBusted && isPlayersTurn){
+		   gameOptions
         	}
 
 		if (!player.hasBusted){
 		    playAgainstDealer
 		} else { 
+		    isPlayersTurn = false
 		    println("Oh no!  You busted! You lose!")
 		}
 	}
 	printf("Player now has $%d left\n", player.amount)
-	cleanup
+	applyFunctionIfPlayerHasSufficientFunds(cleanup)
+   }
+
+   private def applyFunctionIfPlayerHasSufficientFunds(carryOn: Unit ) = if (!player.hasSufficientFunds(MINIMUM_BET)) sayGoodByeAndExit else carryOn   
+
+   private def sayGoodByeAndExit = {
+	println("Sorry! You do not have enough to continue the game. Good bye!")
+	System.exit(1);
    }
 
    private def cleanup = {
@@ -91,64 +103,60 @@ class BlackJack {
         player.clearHand
    }
 
-   private def gameOptions:Boolean = {
+//TODO: Find a way to consolidate playThreeOptions and hitOrStay into one method. Code is duplicated and it is a smell.
+//	Look into what can be done with partial functions.
+   private def gameOptions = {
 	   if (player.canDoubleDown(bet)){
-		return playThreeOptions
+		playThreeOptions
 	   } else {
-		return hitOrStay
+		hitOrStay
 	   }
    }
 
-   private def playThreeOptions:Boolean = {
-	   var turn = true
+   private def playThreeOptions = {
            println("What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)")
            val verdict = readChar()
            verdict match {
                 case 'h' => {
                                 player.takeCard(deck(counter))
                                 incrementCounter
-	   			if (player.hasBusted) turn = false
                             }
                 case 's' => {
+				isPlayersTurn = false
                                 dealer.timeToPlay = true
-                                turn = false
                             }
                 case 'd' => {
                                 bet += player.bet(bet)
                                 player.takeCard(deck(counter))
                                 incrementCounter
+				isPlayersTurn = false
                                 dealer.timeToPlay = true
-                                turn = false
                             }
 		case _ => println("You have pressed an invalid option! Please try again.")
            }
 	println(player)
-	turn
    }
 
-   private def hitOrStay:Boolean = {
-	   var turn = true
+   private def hitOrStay = {
            println("What do you want to do? ('h' to Hit or 's' to Stay)")
            val verdict = readChar()
            verdict match {
                 case 'h' => {
                                 player.takeCard(deck(counter))
                                 incrementCounter
-	   			if (player.hasBusted) turn = false
                             }
                 case 's' => {
+				isPlayersTurn = false
                                 dealer.timeToPlay = true
-                                turn = false
                             }
 		case _ => println("You have pressed an invalid option! Please try again.")
            }
 	println(player)
-	turn
    }
 
    private def playAgainstDealer = {
         println(dealer)
-        while (dealer.score < 17){
+        while (dealer.score < DEALER_SCORE_MINIMUM){
                 dealer.takeCard(deck(counter))
                 incrementCounter
         	println(dealer)
