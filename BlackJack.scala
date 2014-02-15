@@ -103,55 +103,38 @@ class BlackJack {
         player.clearHand
    }
 
-//TODO: Find a way to consolidate playThreeOptions and hitOrStay into one method. Code is duplicated and it is a smell.
-//	Look into what can be done with partial functions.
+   private def displayOptionsToUser = {
+	val HITSTAY = "What do you want to do? ('h' to Hit or 's' to Stay)"
+	val HITSTAYDOUBLEDOWN = "What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)"
+
+	if (player.canDoubleDown(bet)) println(HITSTAYDOUBLEDOWN) else println(HITSTAY)
+
+   }
+
    private def gameOptions = {
-	   if (player.canDoubleDown(bet)){
-		playThreeOptions
-	   } else {
-		hitOrStay
-	   }
-   }
-
-   private def playThreeOptions = {
-           println("What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)")
-           val verdict = readChar()
-           verdict match {
-                case 'h' => {
-                                player.takeCard(deck(counter))
-                                incrementCounter
-                            }
-                case 's' => {
-				isPlayersTurn = false
-                                dealer.timeToPlay = true
-                            }
-                case 'd' => {
-                                bet += player.bet(bet)
-                                player.takeCard(deck(counter))
-                                incrementCounter
-				isPlayersTurn = false
-                                dealer.timeToPlay = true
-                            }
-		case _ => println("You have pressed an invalid option! Please try again.")
-           }
+	displayOptionsToUser
+        val verdict = readChar()
+	playOptions(verdict)
 	println(player)
    }
 
-   private def hitOrStay = {
-           println("What do you want to do? ('h' to Hit or 's' to Stay)")
-           val verdict = readChar()
-           verdict match {
-                case 'h' => {
-                                player.takeCard(deck(counter))
-                                incrementCounter
-                            }
-                case 's' => {
-				isPlayersTurn = false
-                                dealer.timeToPlay = true
-                            }
-		case _ => println("You have pressed an invalid option! Please try again.")
-           }
-	println(player)
+   private def playOptions:PartialFunction[Char, Unit] = {
+      case 'h' => {
+      			player.takeCard(deck(counter))
+      			incrementCounter
+      		}
+      case 's' => {
+			isPlayersTurn = false
+			dealer.timeToPlay = true
+                  }
+      case 'd' if player.canDoubleDown(bet) => {
+			bet += player.bet(bet)
+                        player.takeCard(deck(counter))
+                        incrementCounter
+			isPlayersTurn = false
+                        dealer.timeToPlay = true
+                  }
+      case _ => println("You have pressed an invalid option! Please try again.")
    }
 
    private def playAgainstDealer = {
