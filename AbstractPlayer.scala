@@ -1,5 +1,6 @@
 abstract class AbstractPlayer {
-   def hand:Hand;
+		def hand:Hand
+		var timeToPlay = true
 
    def clearHand = {
       hand.clear

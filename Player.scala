@@ -1,6 +1,6 @@
 class Player extends AbstractPlayer {
-   var amount:Int = 0
-   override val hand: Hand = new Hand()
+	var amount:Int = 0
+	override val hand: Hand = new Hand()
 
    def this(initialAmount:Int) {
 	this()

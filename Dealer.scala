@@ -1,6 +1,6 @@
 class Dealer extends AbstractPlayer {
 	override val hand:Hand = new Hand()
-	var timeToPlay:Boolean = false
+	timeToPlay = false
 
 	def showFirstCard:Card = {
 		hand.cards(0)

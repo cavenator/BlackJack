@@ -1,5 +1,4 @@
 //TODO:  Come up with a more clever way to determine when the deck needs to be reshuffled.
-//	 Also, take the isPlayersTurn out and put it into the Player class. it belongs there.
 
 class BlackJack {
    val player = new Player(100)
@@ -10,7 +9,6 @@ class BlackJack {
    val MINIMUM_BET = 5
    val DEALER_SCORE_MINIMUM = 17
    var bet = 0
-   var isPlayersTurn = true
 
    private def assignCards = {
         for (i <- 0 until 2){
@@ -19,7 +17,6 @@ class BlackJack {
            dealer.takeCard(deck(counter))
            incrementCounter
         }
-        dealer.timeToPlay = false
    }
 
    private def incrementCounter = {
@@ -53,7 +50,10 @@ class BlackJack {
    }
 
    def playGamesIfFundsAreSufficient = applyFunctionIfPlayerHasSufficientFunds(playGame)
-   
+	private def initializeTimeToPlayForPlayerAndDealer = {
+		player.timeToPlay = true
+		dealer.timeToPlay = false
+	}
 
    def playGame = {
 	shuffleIfNecessary
@@ -62,10 +62,10 @@ class BlackJack {
 
         assignCards
 
-        isPlayersTurn = true
+				initializeTimeToPlayForPlayerAndDealer
 
 	if (player.hasBlackJack){
-	   isPlayersTurn = false
+	   player.timeToPlay = false
 	   println("You have BLACKJACK! Woot!!")
 	   if (dealer.hasBlackJack){
 		println("But Dealer has BlackJack too! It's a wash")
@@ -75,14 +75,13 @@ class BlackJack {
 	   }
 	} else {
         	println(dealer+"\n"+player)
-        	while (!player.hasBusted && isPlayersTurn){
+        	while (!player.hasBusted && player.timeToPlay){
 		   gameOptions
         	}
 
 		if (!player.hasBusted){
 		    playAgainstDealer
 		} else { 
-		    isPlayersTurn = false
 		    println("Oh no!  You busted! You lose!")
 		}
 	}
@@ -124,20 +123,19 @@ class BlackJack {
       			incrementCounter
       		}
       case 's' => {
-			isPlayersTurn = false
-			dealer.timeToPlay = true
+			player.timeToPlay = false
                   }
       case 'd' if player.canDoubleDown(bet) => {
-			bet += player.bet(bet)
-                        player.takeCard(deck(counter))
-                        incrementCounter
-			isPlayersTurn = false
-                        dealer.timeToPlay = true
+				bet += player.bet(bet)
+				player.takeCard(deck(counter))
+				incrementCounter
+				player.timeToPlay = false
                   }
       case _ => println("You have pressed an invalid option! Please try again.")
    }
 
    private def playAgainstDealer = {
+				dealer.timeToPlay = true
         println(dealer)
         while (dealer.score < DEALER_SCORE_MINIMUM){
                 dealer.takeCard(deck(counter))
