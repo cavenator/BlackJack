@@ -1,10 +1,8 @@
-//TODO:  Come up with a more clever way to determine when the deck needs to be reshuffled.
-
 class BlackJack {
    val player = new Player(100)
    val dealer = new Dealer()
    val deck = Deck.createDeckOfCards
-   val threshold = deck.size - 7
+   val REMAINING_CARDS_THRESHOLD_SCORE = 42  // the threshold score possible of remaining cards left before reshuffling is necessary
    var counter = 50
    val MINIMUM_BET = 5
    val DEALER_SCORE_MINIMUM = 17
@@ -43,26 +41,26 @@ class BlackJack {
    }
 
    private def shuffleIfNecessary = {
-       if (counter >= threshold){
-           Deck.shuffle(deck)
-	   counter = 0
-	}
+       val remainingDeckScore = Hand.calculateMinimumScorePossible(deck.takeRight(deck.size - counter))
+       if (remainingDeckScore <= REMAINING_CARDS_THRESHOLD_SCORE){
+          Deck.shuffle(deck)
+	        counter = 0
+      }
    }
 
-   def playGamesIfFundsAreSufficient = applyFunctionIfPlayerHasSufficientFunds(playGame)
-	private def initializeTimeToPlayForPlayerAndDealer = {
+	private def initializePlayerAndDealerState = {
 		player.timeToPlay = true
 		dealer.timeToPlay = false
 	}
 
    def playGame = {
-	shuffleIfNecessary
+      shuffleIfNecessary
 
-        placeBets
+      placeBets
 
-        assignCards
+			initializePlayerAndDealerState
 
-				initializeTimeToPlayForPlayerAndDealer
+      assignCards
 
 	if (player.hasBlackJack){
 	   player.timeToPlay = false

@@ -9,7 +9,7 @@ object Main{
 		println("Would you like to play a new game? (y or n)")
 		var verdict = readChar()
 		verdict match {
-			case 'y' => blackJack.playGamesIfFundsAreSufficient
+			case 'y' => blackJack.playGame
 			case 'n' => isPlaying = false
 			case _ => println("You pressed an incorrect key! Please try again")
 		}

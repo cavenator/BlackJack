@@ -1,12 +1,16 @@
 import scala.collection.mutable.Seq
 class Hand {
 	var cards = scala.collection.mutable.ArrayBuffer[Card]()
+  def this(cards: scala.collection.mutable.ArrayBuffer[Card]){
+    this()
+    this.cards = cards
+  }
 
 	def add(card:Card) = {
 		cards += card
 	}
 
-        private def computePossibleScores:List[Int] = {
+  private def computePossibleScores:List[Int] = {
 		def mergeScores(acc: Set[Int], card:Card) = {
 			for { i <- acc; j <- card.values } yield i + j
 		}
@@ -31,4 +35,12 @@ class Hand {
 	override def toString:String = {
 		cards.mkString(" ")
 	}
+}
+
+object Hand {
+   def apply(cards: scala.collection.mutable.ArrayBuffer[Card]) = new Hand(cards)
+   def calculateMinimumScorePossible(cards: Array[Card]):Int = {
+      val hand = Hand(cards.toBuffer.asInstanceOf[scala.collection.mutable.ArrayBuffer[Card]])
+      hand.score
+   }
 }
