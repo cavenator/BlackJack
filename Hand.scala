@@ -1,6 +1,9 @@
 import scala.collection.mutable.Seq
 class Hand {
+
 	var cards = scala.collection.mutable.ArrayBuffer[Card]()
+  val MAX_SCORE = 21
+
   def this(cards: scala.collection.mutable.ArrayBuffer[Card]){
     this()
     this.cards = cards
@@ -9,6 +12,10 @@ class Hand {
 	def add(card:Card) = {
 		cards += card
 	}
+
+  def hasBlackJack = score == MAX_SCORE && count == 2
+
+  def hasBusted = score > MAX_SCORE
 
   private def computePossibleScores:List[Int] = {
 		def mergeScores(acc: Set[Int], card:Card) = {

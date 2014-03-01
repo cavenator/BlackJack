@@ -7,7 +7,7 @@ abstract class AbstractPlayer {
    }
 
    def hasBlackJack = {
-      score == 21 && hand.count == 2
+      hand.hasBlackJack
    }
 
    def takeCard(card:Card) = {
@@ -20,7 +20,7 @@ abstract class AbstractPlayer {
 
 
    def hasBusted:Boolean = {
-      score > 21
+      hand.hasBusted
    }
 }
 

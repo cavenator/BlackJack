@@ -1,24 +1,16 @@
 class BlackJack {
    val player = new Player(100)
    val dealer = new Dealer()
-   val deck = Deck.createDeckOfCards
-   val REMAINING_CARDS_THRESHOLD_SCORE = 42  // the threshold score possible of remaining cards left before reshuffling is necessary
-   var counter = 50
+   val deck = Deck()
    val MINIMUM_BET = 5
    val DEALER_SCORE_MINIMUM = 17
    var bet = 0
 
    private def assignCards = {
         for (i <- 0 until 2){
-           player.takeCard(deck(counter))
-           incrementCounter
-           dealer.takeCard(deck(counter))
-           incrementCounter
+           player.takeCard(deck.removeCard)
+           dealer.takeCard(deck.removeCard)
         }
-   }
-
-   private def incrementCounter = {
-        counter += 1
    }
 
    private def readBetFromUserInput = {
@@ -30,31 +22,23 @@ class BlackJack {
    }
 
    private def placeBets = {
-        printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
-	val money = readBetFromUserInput
-	if (player.hasSufficientFunds(money))
+      printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
+      val money = readBetFromUserInput
+      if (player.hasSufficientFunds(money))
            bet = player.bet(money)
-        else {
+      else {
            printf("Insufficient funds! You only have %d\nGiving you the minimum bet: %d\n",player.amount, MINIMUM_BET)
            bet = player.bet(MINIMUM_BET)
-	}
-   }
-
-   private def shuffleIfNecessary = {
-       val remainingDeckScore = Hand.calculateMinimumScorePossible(deck.takeRight(deck.size - counter))
-       if (remainingDeckScore <= REMAINING_CARDS_THRESHOLD_SCORE){
-          Deck.shuffle(deck)
-	        counter = 0
       }
    }
 
-	private def initializePlayerAndDealerState = {
-		player.timeToPlay = true
-		dealer.timeToPlay = false
-	}
+   private def initializePlayerAndDealerState = {
+      player.timeToPlay = true
+      dealer.timeToPlay = false 
+   }
 
    def playGame = {
-      shuffleIfNecessary
+      deck.shuffleIfNecessary
 
       placeBets
 
@@ -90,43 +74,40 @@ class BlackJack {
    private def applyFunctionIfPlayerHasSufficientFunds(carryOn: Unit ) = if (!player.hasSufficientFunds(MINIMUM_BET)) sayGoodByeAndExit else carryOn   
 
    private def sayGoodByeAndExit = {
-	println("Sorry! You do not have enough to continue the game. Good bye!")
-	System.exit(1);
+      println("Sorry! You do not have enough to continue the game. Good bye!")
+      System.exit(1);
    }
 
    private def cleanup = {
-	bet = 0
-        dealer.clearHand
-        player.clearHand
+      bet = 0
+      dealer.clearHand
+      player.clearHand
    }
 
    private def displayOptionsToUser = {
-	val HITSTAY = "What do you want to do? ('h' to Hit or 's' to Stay)"
-	val HITSTAYDOUBLEDOWN = "What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)"
+      val HITSTAY = "What do you want to do? ('h' to Hit or 's' to Stay)"
+      val HITSTAYDOUBLEDOWN = "What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)"
 
-	if (player.canDoubleDown(bet)) println(HITSTAYDOUBLEDOWN) else println(HITSTAY)
-
+      if (player.canDoubleDown(bet)) println(HITSTAYDOUBLEDOWN) else println(HITSTAY)
    }
 
    private def gameOptions = {
-	displayOptionsToUser
-        val verdict = readChar()
-	playOptions(verdict)
-	println(player)
+      displayOptionsToUser
+      val verdict = readChar()
+      playOptions(verdict)
+      println(player)
    }
 
    private def playOptions:PartialFunction[Char, Unit] = {
       case 'h' => {
-      			player.takeCard(deck(counter))
-      			incrementCounter
+      			player.takeCard(deck.removeCard)
       		}
       case 's' => {
 			player.timeToPlay = false
                   }
       case 'd' if player.canDoubleDown(bet) => {
 				bet += player.bet(bet)
-				player.takeCard(deck(counter))
-				incrementCounter
+				player.takeCard(deck.removeCard)
 				player.timeToPlay = false
                   }
       case _ => println("You have pressed an invalid option! Please try again.")
@@ -136,9 +117,8 @@ class BlackJack {
 				dealer.timeToPlay = true
         println(dealer)
         while (dealer.score < DEALER_SCORE_MINIMUM){
-                dealer.takeCard(deck(counter))
-                incrementCounter
-        	println(dealer)
+           dealer.takeCard(deck.removeCard)
+           println(dealer)
         }
 
         if (!dealer.hasBusted && dealer.score > player.score){
