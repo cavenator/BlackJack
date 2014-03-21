@@ -74,8 +74,7 @@ class BlackJack {
    private def applyFunctionIfPlayerHasSufficientFunds(carryOn: Unit ) = if (!player.hasSufficientFunds(MINIMUM_BET)) sayGoodByeAndExit else carryOn   
 
    private def sayGoodByeAndExit = {
-      println("Sorry! You do not have enough to continue the game. Good bye!")
-      System.exit(1);
+      throw new RuntimeException("Sorry! You do not have enough to continue the game. Good bye!")
    }
 
    private def cleanup = {
