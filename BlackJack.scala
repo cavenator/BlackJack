@@ -58,7 +58,8 @@ class BlackJack {
 	} else {
         	println(dealer+"\n"+player)
         	while (!player.hasBusted && player.timeToPlay){
-		   gameOptions
+                   GameOptions.displayGameOptionsTo(player,bet)
+                   executeUserInput
         	}
 
 		if (!player.hasBusted){
@@ -83,28 +84,20 @@ class BlackJack {
       player.clearHand
    }
 
-   private def displayOptionsToUser = {
-      val HITSTAY = "What do you want to do? ('h' to Hit or 's' to Stay)"
-      val HITSTAYDOUBLEDOWN = "What do you want to do? ('h' to Hit, 's' to Stay, or 'd' to Double Down)"
-
-      if (player.canDoubleDown(bet)) println(HITSTAYDOUBLEDOWN) else println(HITSTAY)
-   }
-
-   private def gameOptions = {
-      displayOptionsToUser
-      val verdict = readChar()
+   private def executeUserInput = {
+      val verdict = readInt()
       playOptions(verdict)
       println(player)
    }
 
-   private def playOptions:PartialFunction[Char, Unit] = {
-      case 'h' => {
+   private def playOptions:PartialFunction[Int, Unit] = {
+      case 1 => {
       			player.takeCard(deck.removeCard)
       		}
-      case 's' => {
+      case 2 => {
 			player.timeToPlay = false
                   }
-      case 'd' if player.canDoubleDown(bet) => {
+      case 3 if player.canDoubleDown(bet) => {
 				bet += player.bet(bet)
 				player.takeCard(deck.removeCard)
 				player.timeToPlay = false
