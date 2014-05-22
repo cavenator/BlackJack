@@ -13,6 +13,7 @@ class Hand {
 		cards += card
 	}
 
+  def canSplit:Boolean = count == 2 && cards(0).values == cards(1).values
   def hasBlackJack = score == MAX_SCORE && count == 2
 
   def hasBusted = score > MAX_SCORE

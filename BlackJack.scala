@@ -4,7 +4,6 @@ class BlackJack {
    val deck = Deck()
    val MINIMUM_BET = 5
    val DEALER_SCORE_MINIMUM = 17
-   var bet = 0
 
    private def assignCards = {
         for (i <- 0 until 2){
@@ -25,10 +24,10 @@ class BlackJack {
       printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
       val money = readBetFromUserInput
       if (player.hasSufficientFunds(money))
-           bet = player.bet(money)
+           player.addToBet(money)
       else {
            printf("Insufficient funds! You only have %d\nGiving you the minimum bet: %d\n",player.amount, MINIMUM_BET)
-           bet = player.bet(MINIMUM_BET)
+           player.addToBet(MINIMUM_BET)
       }
    }
 
@@ -42,7 +41,7 @@ class BlackJack {
 
       placeBets
 
-			initializePlayerAndDealerState
+      initializePlayerAndDealerState
 
       assignCards
 
@@ -51,14 +50,14 @@ class BlackJack {
 	   println("You have BLACKJACK! Woot!!")
 	   if (dealer.hasBlackJack){
 		println("But Dealer has BlackJack too! It's a wash")
-		player.takeWinnings(bet)
+		player.takeWinnings(player.bet)
 	   } else {
-                player.takeWinnings(2 * bet)
+                player.takeWinnings(2 * player.bet)
 	   }
 	} else {
         	println(dealer+"\n"+player)
         	while (!player.hasBusted && player.timeToPlay){
-                   GameOptions.displayGameOptionsTo(player,bet)
+                   GameOptions.displayGameOptionsTo(player)
                    executeUserInput
         	}
 
@@ -79,7 +78,6 @@ class BlackJack {
    }
 
    private def cleanup = {
-      bet = 0
       dealer.clearHand
       player.clearHand
    }
@@ -97,10 +95,15 @@ class BlackJack {
       case 2 => {
 			player.timeToPlay = false
                   }
-      case 3 if player.canDoubleDown(bet) => {
-				bet += player.bet(bet)
+      case 3 if player.canDoubleDown => {
+				player.addToBet(player.bet) //doubling your original bet
 				player.takeCard(deck.removeCard)
 				player.timeToPlay = false
+                  }
+      case 4 if player.canSplitHand => {
+                                //prompt user for additional bet for splitting
+                                //player split cards
+                                //player takes a card from deck
                   }
       case _ => println("You have pressed an invalid option! Please try again.")
    }
@@ -117,10 +120,10 @@ class BlackJack {
                 println("You lose!")
         } else if (dealer.score == player.score) {
 		println("It's a push. You get your bet back")
-		player.takeWinnings(bet)
+		player.takeWinnings(player.bet)
 	} else {
                 println("You win!!")
-                player.takeWinnings(2 * bet)
+                player.takeWinnings(2 * player.bet)
         }
    }
 
