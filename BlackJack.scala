@@ -45,6 +45,7 @@ class BlackJack {
 
       assignCards
 
+       	println(dealer+"\n"+player)
 	if (player.hasBlackJack){
 	   player.timeToPlay = false
 	   println("You have BLACKJACK! Woot!!")
@@ -55,16 +56,20 @@ class BlackJack {
                 player.takeWinnings(2 * player.bet)
 	   }
 	} else {
-        	println(dealer+"\n"+player)
-        	while (!player.hasBusted && player.timeToPlay){
-                   GameOptions.displayGameOptionsTo(player)
-                   executeUserInput
+        	while (player.hasPlayableHand && player.timeToPlay){
+                   if (player.onlyHasOneCard){
+                      println("Player dealt another card for hand resulting from split.")
+                      player.takeCard(deck.removeCard)
+                   } else {
+                      GameOptions.displayGameOptionsTo(player)
+                      executeUserInput
+                   }
         	}
 
-		if (!player.hasBusted){
+		if (player.hasPlayableHand){
 		    playAgainstDealer
 		} else { 
-		    println("Oh no!  You busted! You lose!")
+		    println("Oh no!  You lose!")
 		}
 	}
 	printf("Player now has $%d left\n", player.amount)
@@ -88,43 +93,37 @@ class BlackJack {
       println(player)
    }
 
+   //TODO:  Modify flow in here to deal with the possibility of multiple hands due to split.
    private def playOptions:PartialFunction[Int, Unit] = {
       case 1 => {
       			player.takeCard(deck.removeCard)
       		}
       case 2 => {
-			player.timeToPlay = false
+                        player.stay 
                   }
       case 3 if player.canDoubleDown => {
-				player.addToBet(player.bet) //doubling your original bet
-				player.takeCard(deck.removeCard)
-				player.timeToPlay = false
+                                player.doubleDown(deck.removeCard)
                   }
       case 4 if player.canSplitHand => {
-                                //prompt user for additional bet for splitting
-                                //player split cards
-                                //player takes a card from deck
+                                player.splitHand
+                                player.takeCard(deck.removeCard)
                   }
       case _ => println("You have pressed an invalid option! Please try again.")
    }
 
    private def playAgainstDealer = {
-				dealer.timeToPlay = true
+	dealer.timeToPlay = true
         println(dealer)
         while (dealer.score < DEALER_SCORE_MINIMUM){
            dealer.takeCard(deck.removeCard)
            println(dealer)
         }
 
-        if (!dealer.hasBusted && dealer.score > player.score){
-                println("You lose!")
-        } else if (dealer.score == player.score) {
-		println("It's a push. You get your bet back")
-		player.takeWinnings(player.bet)
-	} else {
-                println("You win!!")
-                player.takeWinnings(2 * player.bet)
+        for (i <- 0 until player.getTotalNumOfHands){
+            player.useHandAndBet(i)
+            player.compareAgainstDealer(dealer)
         }
+        
    }
 
 }

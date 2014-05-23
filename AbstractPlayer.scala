@@ -10,7 +10,7 @@ abstract class AbstractPlayer {
       hand.hasBlackJack
    }
 
-   def takeCard(card:Card) = {
+   def takeCard(card:Card):Unit = {
       hand.add(card)
    }
 
