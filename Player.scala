@@ -23,7 +23,10 @@ class Player extends AbstractPlayer {
    override def takeCard(card:Card) = {
        super.takeCard(card)
        hands = hands.updated(handIndex, hand)
-       if (hand.hasBusted) moveToNextHandOrStopTurn
+       if (hand.hasBusted){
+            println("You have busted with "+hand+", totaling "+hand.score)
+            moveToNextHandOrStopTurn
+       }
    }
 
    def canDoubleDown:Boolean = {
@@ -33,8 +36,10 @@ class Player extends AbstractPlayer {
    def doubleDown(card:Card) = {
        addToBet(bet)
        takeCard(card)
-       
-       if (!hand.hasBusted) moveToNextHandOrStopTurn
+       if (hand.hasBusted){
+           println("You have busted with "+hand+", totaling "+hand.score)
+       }
+       moveToNextHandOrStopTurn
    }
 
    def stay = moveToNextHandOrStopTurn
@@ -50,13 +55,15 @@ class Player extends AbstractPlayer {
    }
 
    def compareAgainstDealer(dealer:Dealer) = {
-       if (!dealer.hasBusted && dealer.score > this.score){
-           println("You lose!")
-       } else if (dealer.score == this.score) {
-       	   println("It's a push. You get your bet back")
+       val dealerScore = dealer.score
+       val playerScore = this.score
+       if (!dealer.hasBusted && dealerScore > playerScore){
+           printf("You lose! dealer: %d, player: %d\n", dealerScore, playerScore)
+       } else if (dealerScore == playerScore) {
+       	   printf("It's a push (%d vs %d). You get your bet back\n", dealerScore, playerScore)
        	   takeWinnings(this.bet)
        } else {
-           println("You win!!")
+           printf("You win!! dealer: %d, you: %d\n", dealerScore, playerScore)
            takeWinnings(2 * this.bet)
        }
    }
@@ -87,8 +94,8 @@ class Player extends AbstractPlayer {
       hand = hands(handIndex)
 
       // handle bet for new hand
-      // betsIndex does not move;  betIndex should only move when handIndex does
-      bets = bets.updated(betsIndex + 1, bet)
+			val (leftBet, rightBet) = bets.splitAt(betsIndex)
+			bets = leftBet ++ List(bet) ++ rightBet
       amount -= bet
       
    }

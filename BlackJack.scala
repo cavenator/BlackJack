@@ -46,20 +46,21 @@ class BlackJack {
       assignCards
 
        	println(dealer+"\n"+player)
-	if (player.hasBlackJack){
-	   player.timeToPlay = false
-	   println("You have BLACKJACK! Woot!!")
-	   if (dealer.hasBlackJack){
-		println("But Dealer has BlackJack too! It's a wash")
-		player.takeWinnings(player.bet)
-	   } else {
-                player.takeWinnings(2 * player.bet)
-	   }
-	} else {
+			if (player.hasBlackJack){
+				player.timeToPlay = false
+				println("You have BLACKJACK! Woot!!")
+				if (dealer.hasBlackJack){
+					println("But Dealer has BlackJack too! It's a wash")
+					player.takeWinnings(player.bet)
+				} else {
+					player.takeWinnings(2 * player.bet)
+				}
+			} else {
         	while (player.hasPlayableHand && player.timeToPlay){
                    if (player.onlyHasOneCard){
                       println("Player dealt another card for hand resulting from split.")
                       player.takeCard(deck.removeCard)
+                      println(player)
                    } else {
                       GameOptions.displayGameOptionsTo(player)
                       executeUserInput
