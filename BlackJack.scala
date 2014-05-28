@@ -1,8 +1,7 @@
-class BlackJack {
+class BlackJack(MINIMUM_BET:Int) {
    val player = new Player(100)
    val dealer = new Dealer()
    val deck = Deck()
-   val MINIMUM_BET = 5
    val DEALER_SCORE_MINIMUM = 17
 
    private def assignCards = {
@@ -20,15 +19,19 @@ class BlackJack {
       }
    }
 
-   private def placeBets = {
+   def placeBets = {
       printf("How much $$ do you want to bet?(MINIMUM BET = %d)\n", MINIMUM_BET)
       val money = readBetFromUserInput
-      if (player.hasSufficientFunds(money))
+      if (money >= MINIMUM_BET && player.hasSufficientFunds(money))
            player.addToBet(money)
+      else if (money < MINIMUM_BET) {
+           printf("Applying MINIMUM_BET ($%d) since $%d is not a valid bet\n",MINIMUM_BET, money)
+           player.addToBet(MINIMUM_BET)
+      }
       else {
            printf("Insufficient funds! You only have %d\nGiving you the minimum bet: %d\n",player.amount, MINIMUM_BET)
            player.addToBet(MINIMUM_BET)
-      }
+      } 
    }
 
    private def initializePlayerAndDealerState = {

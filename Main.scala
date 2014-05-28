@@ -2,7 +2,7 @@ object Main{
 
    def main(args:Array[String]) = {
 	println("Hello and welcome to the BlackJack table! Your default amount is $100\n")
-	val blackJack = new BlackJack()
+	val blackJack = new BlackJack(5)
 	var isPlaying = true
 	blackJack.playGame
 	while (isPlaying){
