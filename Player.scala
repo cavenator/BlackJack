@@ -1,11 +1,11 @@
+sealed case class HandAndBet(hand:Hand = new Hand(), bet:Int = 0)
+
 class Player extends AbstractPlayer {
-        private var hands:List[Hand] = List(new Hand())
-        private var bets:List[Int] = List(0)
-        private var handIndex:Int = 0
-        private var betsIndex:Int = 0
-	var amount:Int = 0
-        var bet:Int = bets(betsIndex)
-        var hand:Hand = hands(handIndex)
+   private var handsWithBets:List[HandAndBet] = List(HandAndBet())
+   private var index:Int = 0
+   var amount:Int = 0
+   var hand = handsWithBets(index).hand
+   var bet = handsWithBets(index).bet
 
    def this(initialAmount:Int) {
 	this()
@@ -13,16 +13,13 @@ class Player extends AbstractPlayer {
    }
 
    override def clearHand = {
-        hands = List(new Hand())
-        bets = List(0)
+        handsWithBets = List(HandAndBet())
         useHandAndBet(0)
    }
 
-   def getTotalNumOfHands = hands.size
-
    override def takeCard(card:Card) = {
        super.takeCard(card)
-       hands = hands.updated(handIndex, hand)
+       handsWithBets = handsWithBets.updated(index, HandAndBet(hand, bet))
        if (hand.hasBusted){
             println("You have busted with "+hand+", totaling "+hand.score)
             moveToNextHandOrStopTurn
@@ -45,40 +42,42 @@ class Player extends AbstractPlayer {
    def stay = moveToNextHandOrStopTurn
 
    private def moveToNextHandOrStopTurn = {
-       if (hands.size == (handIndex + 1)) timeToPlay = false
-       else {
-           handIndex += 1
-           betsIndex += 1
-           hand = hands(handIndex)
-           bet = bets(betsIndex)
-       }
+       if (handsWithBets.size == (index + 1)) timeToPlay = false
+       else useHandAndBet(index + 1)
+   }
+
+   private def extractHandAndBet(handWithBet:HandAndBet) = handWithBet match {
+        case HandAndBet(h,b) => this.hand = h; this.bet = b;
    }
 
    def compareAgainstDealer(dealer:Dealer) = {
-       val dealerScore = dealer.score
-       val playerScore = this.score
-       if (!dealer.hasBusted && dealerScore > playerScore){
-           printf("You lose! dealer: %d, player: %d\n", dealerScore, playerScore)
-       } else if (dealerScore == playerScore) {
-       	   printf("It's a push (%d vs %d). You get your bet back\n", dealerScore, playerScore)
-       	   takeWinnings(this.bet)
-       } else {
-           printf("You win!! dealer: %d, you: %d\n", dealerScore, playerScore)
-           takeWinnings(2 * this.bet)
+       def compareHandWithDealers(handWithBet:HandAndBet, dealerHand:Hand) = {
+               extractHandAndBet(handWithBet)
+               val dealerScore = dealerHand.score
+               val playerScore = hand.score
+               if (!dealerHand.hasBusted && dealerScore > playerScore){
+                   printf("You lose! dealer: %d, player: %d\n", dealerScore, playerScore)
+               } else if (dealerScore == playerScore) {
+               	   printf("It's a push (%d vs %d). You get your bet back\n", dealerScore, playerScore)
+               	   takeWinnings(this.bet)
+               } else {
+                   printf("You win!! dealer: %d, you: %d\n", dealerScore, playerScore)
+                   takeWinnings(2 * this.bet)
+               }
        }
+       handsWithBets.foreach{ (handWithBet) => compareHandWithDealers(handWithBet, dealer.hand) }
    }
 
    def useHandAndBet(index:Int) = {
-        handIndex = index
-        betsIndex = index
-        hand = hands(handIndex)
-        bet = bets(betsIndex)
+        this.index = index
+        extractHandAndBet(handsWithBets(index))
    }
 
    def canSplitHand:Boolean = {
         this.hasSufficientFunds(bet) && hand.canSplit
    }
 
+   //TODO:  update to account for case class
    def splitHand = {
 
       import scala.collection.mutable.ArrayBuffer
@@ -86,16 +85,14 @@ class Player extends AbstractPlayer {
       // split cards into new hands and include them into list of hands
       // handindex remains the same
       val (card1, card2) = hand.split
-      val newHands = List(new Hand(card1), new Hand(card2))
-      val (left, right) = hands.splitAt(handIndex)
-      hands = left ++ newHands ++ right.tail
+      val newHands = List(HandAndBet(new Hand(card1), bet), HandAndBet(new Hand(card2),bet))
+      val (left, right) = handsWithBets.splitAt(index)
+      handsWithBets = left ++ newHands ++ right.tail
 
       //re-assign current hand
-      hand = hands(handIndex)
+      hand = handsWithBets(index).hand
 
-      // handle bet for new hand
-			val (leftBet, rightBet) = bets.splitAt(betsIndex)
-			bets = leftBet ++ List(bet) ++ rightBet
+      //deduct additional bet from amount
       amount -= bet
       
    }
@@ -107,7 +104,7 @@ class Player extends AbstractPlayer {
    def addToBet(wager:Int) = {
 	amount -= wager
 	bet += wager
-        bets = bets.updated(betsIndex, bet)
+        handsWithBets = handsWithBets.updated(index, HandAndBet(hand, bet))
    }
 
    def takeWinnings(winnings:Int) = amount += winnings
@@ -115,7 +112,7 @@ class Player extends AbstractPlayer {
    def onlyHasOneCard = hand.count == 1
 
    def hasPlayableHand = {
-       hands.exists( (hand) => !hand.hasBusted )
+       handsWithBets.exists( handAndBet => !handAndBet.hand.hasBusted )
    }
 
    override def toString:String = {

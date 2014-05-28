@@ -68,8 +68,9 @@ class BlackJack {
         	}
 
 		if (player.hasPlayableHand){
-		    playAgainstDealer
-		} else { 
+                    dealerDrawsUntilMinimumScore
+                    player.compareAgainstDealer(dealer)
+	        } else { 
 		    println("Oh no!  You lose!")
 		}
 	}
@@ -112,19 +113,13 @@ class BlackJack {
       case _ => println("You have pressed an invalid option! Please try again.")
    }
 
-   private def playAgainstDealer = {
+   private def dealerDrawsUntilMinimumScore = {
 	dealer.timeToPlay = true
         println(dealer)
         while (dealer.score < DEALER_SCORE_MINIMUM){
            dealer.takeCard(deck.removeCard)
            println(dealer)
         }
-
-        for (i <- 0 until player.getTotalNumOfHands){
-            player.useHandAndBet(i)
-            player.compareAgainstDealer(dealer)
-        }
-        
    }
 
 }
