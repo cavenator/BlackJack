@@ -3,7 +3,7 @@ class Deck(val cards:Array[Card]){
    private val RESHUFFLING_THRESHOLD_SCORE = 42 // the threshold score required for reshuffling
 
    def shuffleIfNecessary = {
-      val remainingDeckScore = Hand.calculateMinimumScorePossible(cards.takeRight(cards.size - counter))
+      val remainingDeckScore = Hand.calculateMinimumScorePossible(cards.takeRight(cards.size - counter).toList)
       if (remainingDeckScore < RESHUFFLING_THRESHOLD_SCORE){
          shuffle
          counter = 0

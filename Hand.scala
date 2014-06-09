@@ -1,16 +1,16 @@
 import scala.collection.mutable.Seq
 class Hand {
 
-	var cards = scala.collection.mutable.ArrayBuffer[Card]()
+	var cards = List[Card]()
   val MAX_SCORE = 21
 
-  def this(cards: scala.collection.mutable.ArrayBuffer[Card]){
+  def this(cards: List[Card]){
     this()
     this.cards = cards
   }
 
 	def add(card:Card) = {
-		cards += card
+		cards = cards :+ card
 	}
 
   def canSplit:Boolean = count == 2 && cards(0).symbol == cards(1).symbol
@@ -34,7 +34,7 @@ class Hand {
 	}
 
 	def clear = {
-		cards.clear
+		cards = List[Card]()
 	}
 
 	def count:Int = {
@@ -47,9 +47,9 @@ class Hand {
 }
 
 object Hand {
-   def apply(cards: scala.collection.mutable.ArrayBuffer[Card]) = new Hand(cards)
-   def calculateMinimumScorePossible(cards: Array[Card]):Int = {
-      val hand = Hand(cards.toBuffer.asInstanceOf[scala.collection.mutable.ArrayBuffer[Card]])
+   def apply(cards: List[Card]) = new Hand(cards)
+   def calculateMinimumScorePossible(cards: List[Card]):Int = {
+      val hand = Hand(cards)
       hand.score
    }
 }
