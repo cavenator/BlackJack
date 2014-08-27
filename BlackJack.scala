@@ -1,6 +1,7 @@
 class BlackJack(MINIMUM_BET:Int) {
-   val player = new Player(100)
    val dealer = new Dealer()
+   val player = new Player(100)
+   val playerStateMaintainer = new PlayerStateMaintainer(dealer, player)
    val deck = Deck()
    val DEALER_SCORE_MINIMUM = 17
 
@@ -34,23 +35,18 @@ class BlackJack(MINIMUM_BET:Int) {
       } 
    }
 
-   private def initializePlayerAndDealerState = {
-      player.timeToPlay = true
-      dealer.timeToPlay = false 
-   }
-
    def playGame = {
       deck.shuffleIfNecessary
 
       placeBets
 
-      initializePlayerAndDealerState
+      playerStateMaintainer.playersTurn
 
       assignCards
 
        	println(dealer+"\n"+player)
 			if (player.hasBlackJack){
-				player.timeToPlay = false
+                playerStateMaintainer.dealersTurn
 				println("You have BLACKJACK! Woot!!")
 				if (dealer.hasBlackJack){
 					println("But Dealer has BlackJack too! It's a wash")
@@ -59,7 +55,7 @@ class BlackJack(MINIMUM_BET:Int) {
 					player.takeWinnings(2 * player.bet)
 				}
 			} else {
-        	while (player.hasPlayableHand && player.timeToPlay){
+        	while (player.hasPlayableHand && player.isPlayingTurn){
                    if (player.onlyHasOneCard){
                       println("Player dealt another card for hand resulting from split.")
                       player.takeCard(deck.removeCard)
@@ -117,7 +113,7 @@ class BlackJack(MINIMUM_BET:Int) {
    }
 
    private def dealerDrawsUntilMinimumScore = {
-	dealer.timeToPlay = true
+        playerStateMaintainer.dealersTurn
         println(dealer)
         while (dealer.score < DEALER_SCORE_MINIMUM){
            dealer.takeCard(deck.removeCard)

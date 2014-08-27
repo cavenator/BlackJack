@@ -1,9 +1,19 @@
 abstract class AbstractPlayer {
 		def hand:Hand
-		var timeToPlay = true
+		private var timeToPlay = false
 
    def clearHand = {
       hand.clear
+   }
+
+   def isPlayingTurn = timeToPlay
+
+   def stopTurn = {
+      timeToPlay = false
+   }
+
+   def startTurn = {
+    timeToPlay = true
    }
 
    def hasBlackJack = {

@@ -42,7 +42,7 @@ class Player extends AbstractPlayer {
    def stay = moveToNextHandOrStopTurn
 
    private def moveToNextHandOrStopTurn = {
-       if (handsWithBets.size == (index + 1)) timeToPlay = false
+       if (handsWithBets.size == (index + 1)) stopTurn
        else useHandAndBet(index + 1)
    }
 
@@ -77,13 +77,10 @@ class Player extends AbstractPlayer {
         this.hasSufficientFunds(bet) && hand.canSplit
    }
 
-   //TODO:  update to account for case class
    def splitHand = {
 
-      import scala.collection.mutable.ArrayBuffer
-
       // split cards into new hands and include them into list of hands
-      // handindex remains the same
+      // index remains the same
       val (card1, card2) = hand.split
       val newHands = List(HandAndBet(new Hand(card1), bet), HandAndBet(new Hand(card2),bet))
       val (left, right) = handsWithBets.splitAt(index)
