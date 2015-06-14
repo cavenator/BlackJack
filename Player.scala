@@ -77,12 +77,12 @@ class Player extends AbstractPlayer {
         this.hasSufficientFunds(bet) && hand.canSplit
    }
 
-   def splitHand = {
+   def splitHand(card1: Card, card2: Card) = {
 
       // split cards into new hands and include them into list of hands
       // index remains the same
-      val (card1, card2) = hand.split
-      val newHands = List(HandAndBet(new Hand(card1), bet), HandAndBet(new Hand(card2),bet))
+      val (hand1, hand2) = hand.split(card1, card2)
+      val newHands = List(HandAndBet(hand1, bet), HandAndBet(hand2,bet))
       val (left, right) = handsWithBets.splitAt(index)
       handsWithBets = left ++ newHands ++ right.tail
 
@@ -105,8 +105,6 @@ class Player extends AbstractPlayer {
    }
 
    def takeWinnings(winnings:Int) = amount += winnings
-
-   def onlyHasOneCard = hand.count == 1
 
    def hasPlayableHand = {
        handsWithBets.exists( handAndBet => !handAndBet.hand.hasBusted )

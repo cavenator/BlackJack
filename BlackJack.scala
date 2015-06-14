@@ -56,14 +56,8 @@ class BlackJack(MINIMUM_BET:Int) {
 				}
 			} else {
         	while (player.hasPlayableHand && player.isPlayingTurn){
-                   if (player.onlyHasOneCard){
-                      println("Player dealt another card for hand resulting from split.")
-                      player.takeCard(deck.removeCard)
-                      println(player)
-                   } else {
-                      GameOptions.displayGameOptionsTo(player)
-                      executeUserInput
-                   }
+						GameOptions.displayGameOptionsTo(player)
+						executeUserInput
         	}
 
 		if (player.hasPlayableHand){
@@ -106,8 +100,7 @@ class BlackJack(MINIMUM_BET:Int) {
                                 player.doubleDown(deck.removeCard)
                   }
       case 4 if player.canSplitHand => {
-                                player.splitHand
-                                player.takeCard(deck.removeCard)
+                                player.splitHand(deck.removeCard, deck.removeCard)
                   }
       case _ => println("You have pressed an invalid option! Please try again.")
    }

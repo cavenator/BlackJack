@@ -14,8 +14,13 @@ class Hand {
 	}
 
   def canSplit:Boolean = count == 2 && cards(0).symbol == cards(1).symbol
+
   def hasBlackJack = score == MAX_SCORE && count == 2
-  def split = cards.splitAt(1)
+
+  def split(card1: Card, card2: Card):(Hand, Hand) = {
+		val (left, right) = cards.splitAt(1)
+		(Hand(left :+ card1), Hand(right :+ card2))
+	}
 
   def hasBusted = score > MAX_SCORE
 

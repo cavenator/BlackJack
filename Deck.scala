@@ -19,11 +19,13 @@ class Deck(val cards:Array[Card]){
    private def shuffle = {
       import scala.util.Random
       val randomizer = new Random()
+			println("Cards need to be reshuffled .....")
       for (i <- 0 until cards.size; j = randomizer.nextInt(52)) {
          val placeholder = cards(i)
          cards(i) = cards(j)
          cards(j) = placeholder
       }
+			println("Cards done shuffling!")
    }
 }
 
