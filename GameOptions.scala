@@ -8,5 +8,14 @@ object GameOptions {
        if (player.canSplitHand) stringBuilder.append(", Press 4 to Split")
        println(stringBuilder.append(".").toString)
     }
-   
+
+    def playOptionsForPlayer(player:Player, deck:Deck, option: Int) = {
+	option match {
+	   case 1 => player.takeCard(deck.removeCard)
+	   case 2 => player.stay
+	   case 3 if player.canDoubleDown => player.doubleDown(deck.removeCard)
+	   case 4 if player.canSplitHand => player.splitHand(deck.removeCard, deck.removeCard)
+	   case _ => println("You have pressed an invalid option! Please try again.")
+	}
+    }   
 }

@@ -83,26 +83,9 @@ class BlackJack(MINIMUM_BET:Int) {
    }
 
    private def executeUserInput = {
-      val verdict = readInt()
-      playOptions(verdict)
+      val verdict:Int = readInt()
+      GameOptions.playOptionsForPlayer(player,deck,verdict)
       println(player)
-   }
-
-   //TODO:  Modify flow in here to deal with the possibility of multiple hands due to split.
-   private def playOptions:PartialFunction[Int, Unit] = {
-      case 1 => {
-      			player.takeCard(deck.removeCard)
-      		}
-      case 2 => {
-                        player.stay 
-                  }
-      case 3 if player.canDoubleDown => {
-                                player.doubleDown(deck.removeCard)
-                  }
-      case 4 if player.canSplitHand => {
-                                player.splitHand(deck.removeCard, deck.removeCard)
-                  }
-      case _ => println("You have pressed an invalid option! Please try again.")
    }
 
    private def dealerDrawsUntilMinimumScore = {
