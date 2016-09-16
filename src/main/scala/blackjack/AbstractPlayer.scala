@@ -1,3 +1,5 @@
+package blackjack
+
 abstract class AbstractPlayer {
 		def hand:Hand
 		private var timeToPlay = false
@@ -27,7 +29,6 @@ abstract class AbstractPlayer {
    def score = {
       hand.score
    }
-
 
    def hasBusted:Boolean = {
       hand.hasBusted

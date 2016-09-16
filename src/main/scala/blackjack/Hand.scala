@@ -1,4 +1,7 @@
+package blackjack
+
 import scala.collection.mutable.Seq
+
 class Hand {
 
 	var cards = List[Card]()

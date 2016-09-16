@@ -1,3 +1,5 @@
+package blackjack
+
 sealed case class Card(val values: Set[Int], val symbol: String, val suit: String){
    override def toString = symbol+suit
 }

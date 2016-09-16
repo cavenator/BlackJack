@@ -1,3 +1,5 @@
+package blackjack
+
 object GameOptions {
 
     val DEFAULT_OPTIONS = "What would you like to do? Press 1 for Hit, Press 2 for Stay"
