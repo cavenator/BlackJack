@@ -1,3 +1,5 @@
+package blackjack
+
 class Dealer extends AbstractPlayer {
 	override val hand:Hand = new Hand()
 

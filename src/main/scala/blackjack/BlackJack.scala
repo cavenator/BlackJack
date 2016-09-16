@@ -1,3 +1,5 @@
+package blackjack
+
 class BlackJack(MINIMUM_BET:Int) {
    val dealer = new Dealer()
    val player = new Player(100)

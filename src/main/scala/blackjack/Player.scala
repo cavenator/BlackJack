@@ -1,3 +1,5 @@
+package blackjack
+
 sealed case class HandAndBet(hand:Hand = new Hand(), bet:Int = 0)
 
 class Player extends AbstractPlayer {

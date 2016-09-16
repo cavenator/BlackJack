@@ -1,3 +1,5 @@
+package blackjack
+
 object CardSuit extends Enumeration {
 	val SPADES = "\u2660"
 	val HEARTS = "\u2665"

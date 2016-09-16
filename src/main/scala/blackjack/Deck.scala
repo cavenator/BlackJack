@@ -1,3 +1,5 @@
+package blackjack
+
 class Deck(val cards:Array[Card]){
    private var counter = 50
    private val RESHUFFLING_THRESHOLD_SCORE = 42 // the threshold score required for reshuffling
